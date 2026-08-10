@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManagerimport androidx.recyclerview.widget.RecyclerView
 import com.smartteacher.app.R
 import com.smartteacher.app.backend.Repository
 import com.smartteacher.app.backend.SessionManager
