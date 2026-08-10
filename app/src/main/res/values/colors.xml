@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Green Theme -->
+    <color name="green_primary">#2E7D32</color>
+    <color name="green_dark">#1B5E20</color>
+    <color name="green_light">#4CAF50</color>
+    <color name="green_pale">#E8F5E9</color>
+    <color name="green_mint">#C8E6C9</color>
+
+    <!-- Accent -->
+    <color name="accent_amber">#FFC107</color>
+    <color name="accent_orange">#FF9800</color>
+
+    <!-- Neutrals -->
+    <color name="white">#FFFFFF</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="bg_main">#F1F8E9</color>
+    <color name="text_primary">#1B1B1B</color>
+    <color name="text_secondary">#555555</color>
+    <color name="text_hint">#888888</color>
+    <color name="divider">#E0E0E0</color>
+
+    <!-- Day colors for weekly schedule (soft pastel) -->
+    <color name="day_sunday">#FFEBEE</color>
+    <color name="day_monday">#E3F2FD</color>
+    <color name="day_tuesday">#F3E5F5</color>
+    <color name="day_wednesday">#FFF3E0</color>
+    <color name="day_thursday">#E0F7FA</color>
+
+    <color name="error_red">#D32F2F</color>
+    <color name="success_green">#388E3C</color>
+</resources>
