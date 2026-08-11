@@ -4,117 +4,84 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.smartteacher.app.R
 import com.smartteacher.app.backend.Repository
 import com.smartteacher.app.backend.SessionManager
 import com.smartteacher.app.backend.model.Subject
-import com.smartteacher.app.databinding.ActivityListWithFabBinding
-import com.smartteacher.app.databinding.ContentListBinding
-import com.smartteacher.app.databinding.DialogAddSubjectBinding
-import com.smartteacher.app.databinding.ItemStudentBinding
 import kotlinx.coroutines.launch
 
+/**
+ * Activity to display and manage subjects.
+ * Expects layout: res/layout/activity_subjects_management.xml with RecyclerView id = recyclerViewSubjects
+ * Item layout: res/layout/item_subject.xml with TextView id = tvSubjectName
+ */
 class SubjectsManagementActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityListWithFabBinding
-    private lateinit var content: ContentListBinding
-    private lateinit var session: SessionManager
+    private lateinit var recyclerView: RecyclerView
     private val adapter = SubjectAdapter()
-    private val subjects = mutableListOf<Subject>()
+    private lateinit var session: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityListWithFabBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_subjects_management)
+
         session = SessionManager(this)
-        binding.toolbar.title = getString(R.string.subject_management)
-        binding.toolbar.setNavigationOnClickListener { finish() }
 
-        content = ContentListBinding.bind(
-            LayoutInflater.from(this).inflate(R.layout.content_list, binding.contentContainer, true)
-        )
-        content.recyclerView.layoutManager = LinearLayoutManager(this)
-        content.recyclerView.adapter = adapter
+        recyclerView = findViewById(R.id.recyclerViewSubjects)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
-        content.swipeRefresh.setOnRefreshListener { load() }
-        binding.fabAdd.setOnClickListener { showAddDialog() }
-        load()
+        // Load subjects for the teacher (no UI progress shown here; keep it simple)
+        loadSubjects()
     }
 
-    override fun onResume() { super.onResume(); load() }
+    override fun onResume() {
+        super.onResume()
+        loadSubjects()
+    }
 
-    fun getSubjectsList(): List<Subject> = subjects
-
-    private fun load() {
+    private fun loadSubjects() {
         val teacherId = session.getTeacherId() ?: return
-        content.progress.visibility = View.VISIBLE
-        content.tvEmpty.visibility = View.GONE
         lifecycleScope.launch {
             val list = runCatching { Repository.getSubjects(teacherId) }.getOrDefault(emptyList())
-            content.progress.visibility = View.GONE
-            content.swipeRefresh.isRefreshing = false
-            subjects.clear(); subjects.addAll(list)
             adapter.submit(list)
-            content.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
         }
     }
+}
 
-    private fun showAddDialog() {
-        val dlgBinding = DialogAddSubjectBinding.inflate(layoutInflater)
-        val dialog = AlertDialog.Builder(this, R.style.Theme_SmartTeacher_Dialog)
-            .setTitle(R.string.add)
-            .setView(dlgBinding.root)
-            .setPositiveButton(R.string.save) { _, _ ->
-                val name = dlgBinding.etName.text.toString().trim()
-                if (name.isEmpty()) return@setPositiveButton
-                val terms = if (dlgBinding.rbTwo.isChecked) 2 else 1
-                val teacherId = session.getTeacherId() ?: return@setPositiveButton
-                val grade = session.getTeacherGrade() ?: return@setPositiveButton
-                val section = session.getTeacherSection() ?: return@setPositiveButton
-                lifecycleScope.launch {
-                    runCatching {
-                        Repository.addSubject(Subject(
-                            teacher_id = teacherId, grade = grade, section = section,
-                            name = name, terms = terms
-                        ))
-                    }
-                    load()
-                }
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .create()
-        dialog.show()
+/**
+ * RecyclerView adapter for Subject items.
+ * Implemented outside the Activity as requested.
+ */
+class SubjectAdapter : RecyclerView.Adapter<SubjectAdapter.VH>() {
+    private val items = mutableListOf<Subject>()
+
+    fun submit(list: List<Subject>) {
+        items.clear()
+        items.addAll(list)
+        notifyDataSetChanged()
     }
 
-    private inner class SubjectAdapter : RecyclerView.Adapter<SubjectAdapter.VH>() {
-        private val items = mutableListOf<Subject>()
-        fun submit(list: List<Subject>) { items.clear(); items.addAll(list); notifyDataSetChanged() }
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            VH(ItemStudentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        override fun getItemCount() = items.size
-        override fun onBindViewHolder(h: VH, pos: Int) = h.bind(items[pos])
-        inner class VH(val b: ItemStudentBinding) : RecyclerView.ViewHolder(b.root) {
-            fun bind(s: Subject) {
-                b.tvName.text = s.name
-                b.tvSub.text = if (s.terms == 2) "فصلان (الفصل الأول / الفصل الثاني)" else "فصل واحد"
-                b.btnDelete.setOnClickListener {
-                    AlertDialog.Builder(itemView.context, R.style.Theme_SmartTeacher_Dialog)
-                        .setTitle(R.string.delete)
-                        .setMessage("حذف المادة ${s.name}؟")
-                        .setPositiveButton(R.string.delete) { _, _ ->
-                            lifecycleScope.launch {
-                                runCatching { Repository.deleteSubject(s.id) }
-                                load()
-                            }
-                        }
-                        .setNegativeButton(R.string.cancel, null)
-                        .show()
-                }
-            }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_subject, parent, false)
+        return VH(v)
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.bind(items[position])
+    }
+
+    class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvName: TextView = itemView.findViewById(R.id.tvSubjectName)
+        fun bind(s: Subject) {
+            tvName.text = s.name
         }
     }
 }
