@@ -1,100 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    package="com.samerjilo8.smartteacher">
 
     <application
-        android:name=".SmartTeacherApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SmartTeacher"
-        android:usesCleartextTraffic="false"
-        tools:targetApi="34">
-
-        <activity
-            android:name=".ui.auth.RoleSelectionActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar">
+        android:theme="@style/Theme.TalpSmartApp">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.auth.TeacherLoginActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.auth.TeacherSetupActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.auth.StudentLoginActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-
-        <activity
-            android:name=".ui.teacher.TeacherDashboardActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.StudentsManagementActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.SubjectsManagementActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.AssignmentsActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.ExamsActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.GradebookActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.NotesActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.teacher.WeeklyScheduleActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-
-        <activity
-            android:name=".ui.student.StudentDashboardActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.student.StudentAssignmentsActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.student.StudentScheduleActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.student.StudentExamsActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.student.StudentGradesActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-        <activity
-            android:name=".ui.student.StudentNotesActivity"
-            android:theme="@style/Theme.SmartTeacher.NoActionBar" />
-
-        <service
-            android:name=".notification.SmartMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="smart_teacher_channel" />
-
     </application>
 
 </manifest>
